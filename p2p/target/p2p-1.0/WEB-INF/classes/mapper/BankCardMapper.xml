@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.p2p.dao.BankCardMapper">
+    <resultMap id="BaseResultMap" type="com.p2p.bean.BankCard">
+        <constructor>
+            <idArg column="bcid" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="uid" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="cardno" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="rname" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="idno" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="type" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="status" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="bktime" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List">
+        bcid, uid, cardno, rname, idno, type, status, bktime
+    </sql>
+    <select id="selectById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from bankcard
+        where bcid = #{bcid,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteById" parameterType="java.lang.Integer">
+        delete from bankcard
+        where bcid = #{bcid,jdbcType=INTEGER}
+    </delete>
+
+    <update id="update" parameterType="com.p2p.bean.BankCard">
+        update bankcard
+        <set>
+            <if test="uid != null">
+                uid = #{uid,jdbcType=INTEGER},
+            </if>
+            <if test="cardno != null">
+                cardno = #{cardno,jdbcType=VARCHAR},
+            </if>
+            <if test="rname != null">
+                rname = #{rname,jdbcType=VARCHAR},
+            </if>
+            <if test="idno != null">
+                idno = #{idno,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                type = #{type,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=INTEGER},
+            </if>
+            <if test="bktime != null">
+                bktime = #{bktime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where bcid = #{bcid,jdbcType=INTEGER}
+    </update>
+
+    <insert id="save" parameterType="com.p2p.bean.User">
+        <![CDATA[
+          insert into bankcard(uid, idno, cardno, rname, type,bktime) values(#{uid}, #{idno},#{cardno}, #{rname},#{type},#{bktime})
+       ]]>
+    </insert>
+    <select id="bankCardsByUid" resultType="bankCard">
+        <![CDATA[
+          select * from bankcard b, t_user u where b.uid = u.uid and u.uid=#{uid}
+        ]]>
+    </select>
+    <sql id="logCz_query_criteria">
+        <if test="query!=null and query.uid !=null">
+            where b.uid =#{query.uid}
+        </if>
+    </sql>
+    <select id="countCriteria" resultType="long">
+         <![CDATA[
+            select count(b.bcid) from bankcard b,t_user u where b.uid =u.uid
+        ]]>
+    </select>
+    <select id="listPagerCriteria" resultType="com.p2p.bean.BankCard">
+         <![CDATA[
+      select b.bcid, b.type,b.cardno,b.bktime , b.status from bankcard b
+    ]]>
+        <include refid="logCz_query_criteria"/>
+        limit #{pager.beginIndex}, #{pager.pageSize}
+    </select>
+    <delete id="removeById" parameterType="java.lang.Integer">
+        delete from bankcard where bcid = #{bcid,jdbcType=INTEGER}
+    </delete>
+</mapper>

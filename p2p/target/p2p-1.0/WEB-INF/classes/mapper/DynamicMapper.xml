@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.p2p.dao.DynamicMapper">
+
+    <insert id="save" parameterType="com.p2p.bean.Dynamic">
+        <![CDATA[
+        insert into dynamic(title, summary, content, pic, created_time) values(#{title},#{summary},#{content},#{pic},#{createdTime})
+        ]]>
+    </insert>
+
+    <sql id="pageCriteria_common">
+        <if test="dynamic != null and dynamic.title != null and dynamic.title != ''">
+            where d.title like concat('%', #{dynamic.title}, '%')
+        </if>
+        <if test="dynamic != null and dynamic.createdTime != null and dynamic.createdTime != ''">
+            and d.created_time <![CDATA[<=]]> #{dynamic.createdTime}
+        </if>
+    </sql>
+
+    <select id="listPagerCriteria" resultType="com.p2p.bean.Dynamic">
+        <![CDATA[
+          select d.dyid, d.title, d.summary, d. pic, d.created_time as createdTime from dynamic d
+        ]]>
+        <include refid="pageCriteria_common"/>
+        order by created_time desc
+        limit #{pager.beginIndex}, #{pager.pageSize}
+    </select>
+
+    <select id="countCriteria" resultType="long" parameterType="com.p2p.bean.Dynamic">
+        <![CDATA[
+          select count(d.dyid) from dynamic d
+        ]]>
+        <include refid="pageCriteria_common"/>
+    </select>
+
+    <select id="getById" resultType="com.p2p.bean.Dynamic">
+        <![CDATA[
+          select * from dynamic d where d.dyid = #{dynamicId}
+        ]]>
+    </select>
+
+    <update id="update" parameterType="com.p2p.bean.Dynamic">
+        <![CDATA[
+          update dynamic set title = #{title}, summary = #{summary}, pic = #{pic}, content = #{content}, created_time = #{createdTime}
+          where dyid = #{dyid}
+        ]]>
+    </update>
+
+
+</mapper>

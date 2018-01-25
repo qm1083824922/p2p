@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.p2p.dao.RewardMapper">
+  <resultMap id="BaseResultMap" type="com.p2p.bean.Reward">
+    <constructor>
+      <idArg column="rwid" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="uid" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="tmoney" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
+      <arg column="money" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
+      <arg column="status" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="reward_time" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List">
+    rwid, uid, tmoney, money, status, reward_time
+  </sql>
+
+  <select id="selectById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from reward
+    where rwid = #{rwid,jdbcType=INTEGER}
+  </select>
+
+  <sql id="query_criteria">
+    <if test="query != null and query.status != null and query.status != ''">
+      and re.status = #{query.status}
+    </if>
+  </sql>
+
+  <select id="listPagerCriteria" resultType="com.p2p.vo.RewardVO">
+    <![CDATA[
+      select re.*, u.phone from reward re, t_user u where re.uid = u.uid
+    ]]>
+    <include refid="query_criteria" />
+    order by re.rwid desc limit #{pager.beginIndex}, #{pager.pageSize}
+  </select>
+
+  <select id="countCriteria" resultType="long" parameterType="com.p2p.query.BorrowQuery">
+    select count(re.rwid) from reward re, t_user u where re.uid = u.uid
+    <include refid="query_criteria" />
+  </select>
+
+  <select id="getAllReward" resultType="com.p2p.bean.Reward">
+    select * from reward where status = 0
+  </select>
+
+  <update id="batchUpdate"  parameterType="java.util.List">
+    update reward set reward_time = now(), status = 1 where uid in
+    <foreach collection="list" open="(" close=")" item="list" separator=",">
+      #{list.uid}
+    </foreach>
+  </update>
+
+  <select id="getByUid" resultType="com.p2p.bean.Reward">
+    select * from reward where uid = #{uid} and status = 0
+  </select>
+
+  <delete id="removeById" parameterType="java.lang.Integer">
+    delete from reward where rwid = #{rwid,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="save" parameterType="com.p2p.bean.Reward">
+    insert into reward
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="uid != null">
+        uid,
+      </if>
+      <if test="tmoney != null">
+        tmoney,
+      </if>
+      <if test="money != null">
+        money,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="rewardTime != null">
+        reward_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="uid != null">
+        #{uid,jdbcType=INTEGER},
+      </if>
+      <if test="tmoney != null">
+        #{tmoney,jdbcType=DECIMAL},
+      </if>
+      <if test="money != null">
+        #{money,jdbcType=DECIMAL},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="rewardTime != null">
+        #{rewardTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="update" parameterType="com.p2p.bean.Reward">
+    update reward
+    <set>
+      <if test="uid != null">
+        uid = #{uid,jdbcType=INTEGER},
+      </if>
+      <if test="tmoney != null">
+        tmoney = #{tmoney,jdbcType=DECIMAL},
+      </if>
+      <if test="money != null">
+        money = #{money,jdbcType=DECIMAL},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="rewardTime != null">
+        reward_time = #{rewardTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where rwid = #{rwid,jdbcType=INTEGER}
+  </update>
+</mapper>

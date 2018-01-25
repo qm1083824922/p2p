@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.p2p.dao.JurMapper">
+  <resultMap id="BaseResultMap" type="com.p2p.bean.Jur">
+    <constructor>
+      <idArg column="jid" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="jurl" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="content" javaType="java.lang.String" jdbcType="VARCHAR" />
+    </constructor>
+  </resultMap>
+
+  <delete id="removeById" parameterType="java.lang.Integer">
+    delete from jur where jid = #{jid,jdbcType=INTEGER}
+  </delete>
+
+  <select id="listPagerCriteria" resultType="com.p2p.bean.Jur">
+    <![CDATA[
+          select j.jid, j.jurl, j.content
+           from jur j
+           limit #{pager.beginIndex}, #{pager.pageSize}
+    ]]>
+  </select>
+
+  <select id="countCriteria" resultType="long" parameterType="com.p2p.bean.Jur">
+    <![CDATA[
+          select count(j.jid) from jur j
+        ]]>
+  </select>
+
+  <select id="getById" resultType="com.p2p.bean.Jur">
+    <![CDATA[
+        select * from  jur j where j.jid = #{jurId}
+      ]]>
+  </select>
+
+  <insert id="save" parameterType="com.p2p.bean.Jur">
+    insert into jur
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="jurl != null">
+        jurl,
+      </if>
+      <if test="content != null">
+        content,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="jurl != null">
+        #{jurl,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null">
+        #{content,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="update" parameterType="com.p2p.bean.Jur">
+    update jur
+    <set>
+      <if test="jurl != null">
+        jurl = #{jurl,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null">
+        content = #{content,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where jid = #{jid,jdbcType=INTEGER}
+  </update>
+
+  <select id="listAll" resultType="jur">
+    <![CDATA[
+      select * from jur
+    ]]>
+  </select>
+
+</mapper>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.p2p.dao.RewardSettingMapper">
+  <resultMap id="BaseResultMap" type="com.p2p.bean.RewardSetting">
+    <constructor>
+      <idArg column="rwsid" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="minmoney" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
+      <arg column="maxmoney" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
+      <arg column="percent" javaType="java.lang.Double" jdbcType="DOUBLE" />
+    </constructor>
+  </resultMap>
+  <select id="listPagerCriteria" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    <![CDATA[
+        select rws.rwsid,rws.minmoney,rws.maxmoney,rws.percent from reward_setting rws
+    ]]>
+    limit #{pager.beginIndex},#{pager.pageSize}
+  </select>
+
+  <select id="getPercent" resultType="double">
+    select percent from reward_setting where #{money} <![CDATA[ >= ]]> minmoney and #{money} <![CDATA[ < ]]> maxmoney
+  </select>
+
+  <delete id="removeById" parameterType="java.lang.Integer">
+    delete from reward_setting
+    where rwsid = #{rwsid,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="save" parameterType="com.p2p.bean.RewardSetting">
+    insert into reward_setting (minmoney, maxmoney, percent) VALUES
+     (#{minmoney,jdbcType=DECIMAL},#{maxmoney,jdbcType=DECIMAL},#{percent,jdbcType=DOUBLE})
+  </insert>
+
+  <select id="countCriteria" resultType="long" parameterType="com.p2p.bean.RewardSetting">
+    <![CDATA[
+        select count(rws.rwsid) from reward_setting rws
+    ]]>
+  </select>
+
+  <select id="getById" resultType="com.p2p.bean.RewardSetting">
+    <![CDATA[
+        select * from  reward_setting rws where rws.rwsid = #{rewardSetId}
+      ]]>
+  </select>
+
+  <update id="update" parameterType="com.p2p.bean.RewardSetting">
+    update reward_setting
+    <set>
+      <if test="minmoney != null">
+        minmoney = #{minmoney,jdbcType=DECIMAL},
+      </if>
+      <if test="maxmoney != null">
+        maxmoney = #{maxmoney,jdbcType=DECIMAL},
+      </if>
+      <if test="percent != null">
+        percent = #{percent,jdbcType=DOUBLE},
+      </if>
+    </set>
+    where rwsid = #{rwsid,jdbcType=INTEGER}
+  </update>
+
+  <select id="listPager" resultType="com.p2p.bean.RewardSetting">
+    <![CDATA[
+      select * from reward_setting limit #{pager.beginIndex}, #{pager.pageSize}
+    ]]>
+  </select>
+
+  <select id="count" resultType="long">
+    <![CDATA[
+          select count(rwsid) from reward_setting
+        ]]>
+  </select>
+
+</mapper>

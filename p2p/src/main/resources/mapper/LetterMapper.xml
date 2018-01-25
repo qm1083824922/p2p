@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.p2p.dao.LetterMapper">
+  <resultMap id="BaseResultMap" type="com.p2p.bean.Letter">
+    <constructor>
+      <idArg column="lid" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="title" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="content" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="created_time" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+      <arg column="status" javaType="java.lang.Integer" jdbcType="INTEGER" />
+    </constructor>
+  </resultMap>
+
+  <sql id="common_letter">
+   <if test="letter !=null and letter.title != null and letter.title !=''">
+        where l.title like concat('%',#{letter.title},'%')
+   </if>
+  </sql>
+
+  <select id="listPagerCriteria" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    <![CDATA[
+        SELECT l.lid,l.title,l.content,l.created_time, l.status from letter l
+    ]]>
+    <include refid="common_letter"/>
+    order by created_time DESC
+    limit #{pager.beginIndex},#{pager.pageSize}
+  </select>
+
+  <select id="listPagerCriteriaStatus" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    <![CDATA[
+        SELECT l.lid,l.title,l.content,l.created_time, l.status from letter l where l.status=1
+    ]]>
+    order by created_time DESC
+    limit #{pager.beginIndex},#{pager.pageSize}
+  </select>
+
+  <select id="countCriteria" resultType="long" parameterType="com.p2p.bean.Letter">
+    <![CDATA[
+          select count(l.lid) from letter l
+    ]]>
+    <include refid="common_letter"/>
+  </select>
+
+  <select id="countCriteriaStatus" resultType="long" parameterType="com.p2p.bean.Letter">
+    <![CDATA[
+          select count(l.lid) from letter l WHERE l.status=1
+    ]]>
+  </select>
+
+  <delete id="removeById" parameterType="java.lang.Integer">
+    delete from letter
+    where lid = #{lid,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="save" parameterType="com.p2p.bean.Letter">
+    insert into letter (title, content,
+      created_time, status)
+    values (#{title,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR},
+      #{createdTime,jdbcType=TIMESTAMP}, #{status,jdbcType=INTEGER})
+  </insert>
+
+  <select id="getById" resultType="com.p2p.bean.Letter">
+    <![CDATA[
+        select * from  letter l where l.lid = #{letterId}
+      ]]>
+  </select>
+
+  <update id="update" parameterType="com.p2p.bean.Letter">
+    update letter
+    <set>
+      <if test="title != null">
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null">
+        content = #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="createdTime != null">
+        created_time = #{createdTime,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
+    </set>
+    where lid = #{lid,jdbcType=INTEGER}
+  </update>
+</mapper>

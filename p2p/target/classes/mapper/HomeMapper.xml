@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.p2p.dao.HomeMapper">
+  <insert id="save" parameterType="com.p2p.bean.Home">
+    insert into home (hid, pic1, pic2,pic3, ewm, phone, url1,url2, url3)
+    values (#{hid,jdbcType=INTEGER}, #{pic1,jdbcType=VARCHAR}, #{pic2,jdbcType=VARCHAR},
+      #{pic3,jdbcType=VARCHAR}, #{ewm,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{url1,jdbcType=VARCHAR},
+      #{url2,jdbcType=VARCHAR}, #{url3,jdbcType=VARCHAR})
+  </insert>
+  <select id="listPagerCriteria" resultType="com.p2p.bean.Home">
+    <![CDATA[
+          select h.hid, h. pic1, h.pic2, h.pic3, h.ewm, h.phone, h.url1, h.url2, h.url3 from home h
+        ]]>
+      order by hid desc limit #{pager.beginIndex}, #{pager.pageSize}
+  </select>
+
+  <select id="countCriteria" resultType="long" parameterType="com.p2p.bean.Home">
+    <![CDATA[
+          select count(h.hid) from home h
+        ]]>
+  </select>
+
+  <update id="update" parameterType="com.p2p.bean.Home">
+    update home
+    set pic1 = #{pic1,jdbcType=VARCHAR},
+      pic2 = #{pic2,jdbcType=VARCHAR},
+      pic3 = #{pic3,jdbcType=VARCHAR},
+      ewm = #{ewm,jdbcType=VARCHAR},
+      phone = #{phone,jdbcType=VARCHAR},
+      url1 = #{url1,jdbcType=VARCHAR},
+      url2 = #{url2,jdbcType=VARCHAR},
+      url3 = #{url3,jdbcType=VARCHAR}
+    where hid = #{hid,jdbcType=INTEGER}
+  </update>
+
+  <select id="getById" resultType="com.p2p.bean.Home">
+    <![CDATA[
+          select * from home h where h.hid = #{hid}
+        ]]>
+  </select>
+
+  <delete id="removeById" parameterType="com.p2p.bean.Home">
+    <![CDATA[
+          delete from home where hid = #{homeId}
+    ]]>
+  </delete>
+
+</mapper>

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.p2p.dao.UserMoneyMapper">
+  <resultMap id="BaseResultMap" type="com.p2p.bean.UserMoney">
+    <constructor>
+      <idArg column="umid" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="uid" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="zmoney" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
+      <arg column="kymoney" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
+      <arg column="symoney" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
+      <arg column="tzmoney" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
+      <arg column="djmoney" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
+      <arg column="dsmoney" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
+      <arg column="jlmoney" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List">
+    umid, uid, zmoney, kymoney, symoney, tzmoney, djmoney, dsmoney, jlmoney
+  </sql>
+  <select id="selectById" parameterType="java.lang.Integer" resultType="userMoney">
+    select
+    <include refid="Base_Column_List" />
+    from usermoney
+    where umid = #{umid,jdbcType=INTEGER}
+  </select>
+
+  <select id="getUserMoney" resultType="com.p2p.bean.UserMoney">
+    select umid, uid, zmoney, kymoney, symoney, tzmoney, djmoney, dsmoney, jlmoney
+    from usermoney where uid = #{uid,jdbcType=INTEGER}
+  </select>
+
+  <delete id="removeById" parameterType="java.lang.Integer">
+    delete from usermoney where umid = #{umid,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="save" parameterType="com.p2p.bean.UserMoney">
+    insert into usermoney
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="uid != null">
+        uid,
+      </if>
+      <if test="zmoney != null">
+        zmoney,
+      </if>
+      <if test="kymoney != null">
+        kymoney,
+      </if>
+      <if test="symoney != null">
+        symoney,
+      </if>
+      <if test="tzmoney != null">
+        tzmoney,
+      </if>
+      <if test="djmoney != null">
+        djmoney,
+      </if>
+      <if test="dsmoney != null">
+        dsmoney,
+      </if>
+      <if test="jlmoney != null">
+        jlmoney,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="uid != null">
+        #{uid,jdbcType=INTEGER},
+      </if>
+      <if test="zmoney != null">
+        #{zmoney,jdbcType=DECIMAL},
+      </if>
+      <if test="kymoney != null">
+        #{kymoney,jdbcType=DECIMAL},
+      </if>
+      <if test="symoney != null">
+        #{symoney,jdbcType=DECIMAL},
+      </if>
+      <if test="tzmoney != null">
+        #{tzmoney,jdbcType=DECIMAL},
+      </if>
+      <if test="djmoney != null">
+        #{djmoney,jdbcType=DECIMAL},
+      </if>
+      <if test="dsmoney != null">
+        #{dsmoney,jdbcType=DECIMAL},
+      </if>
+      <if test="jlmoney != null">
+        #{jlmoney,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="update" parameterType="com.p2p.bean.UserMoney">
+    update usermoney
+    <set>
+      <if test="uid != null">
+        uid = #{uid,jdbcType=INTEGER},
+      </if>
+      <if test="zmoney != null">
+        zmoney = #{zmoney,jdbcType=DECIMAL},
+      </if>
+      <if test="kymoney != null">
+        kymoney = #{kymoney,jdbcType=DECIMAL},
+      </if>
+      <if test="symoney != null">
+        symoney = #{symoney,jdbcType=DECIMAL},
+      </if>
+      <if test="tzmoney != null">
+        tzmoney = #{tzmoney,jdbcType=DECIMAL},
+      </if>
+      <if test="djmoney != null">
+        djmoney = #{djmoney,jdbcType=DECIMAL},
+      </if>
+      <if test="dsmoney != null">
+        dsmoney = #{dsmoney,jdbcType=DECIMAL},
+      </if>
+      <if test="jlmoney != null">
+        jlmoney = #{jlmoney,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where umid = #{umid,jdbcType=INTEGER}
+  </update>
+</mapper>

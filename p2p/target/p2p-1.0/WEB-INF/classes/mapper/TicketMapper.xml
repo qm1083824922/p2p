@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.p2p.dao.TicketMapper">
+  <resultMap id="BaseResultMap" type="com.p2p.bean.Ticket">
+    <constructor>
+      <idArg column="kid" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="name" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="type" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="tkmoney" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="tktime" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List">
+    kid, name, type, tkmoney, tktime
+  </sql>
+  <select id="selectById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ticket
+    where kid = #{kid,jdbcType=INTEGER}
+  </select>
+
+  <select id="getById" parameterType="java.lang.Integer" resultType="com.p2p.bean.Ticket">
+    <![CDATA[
+  select * from ticket where kid = #{id}
+]]>
+  </select>
+
+  <delete id="removeById" parameterType="java.lang.Integer">
+    delete from ticket where kid = #{kid,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="save" parameterType="com.p2p.bean.Ticket">
+    insert into ticket
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="name != null">
+        name,
+      </if>
+      <if test="type != null">
+        type,
+      </if>
+      <if test="tkmoney != null">
+        tkmoney,
+      </if>
+      <if test="tktime != null">
+        tktime,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="tkmoney != null">
+        #{tkmoney,jdbcType=INTEGER},
+      </if>
+      <if test="tktime != null">
+        #{tktime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+
+  <sql id="pageCriteria_common">
+    <if test="ticket != null and ticket.name != null and ticket.name != ''">
+      where t.name like concat('%', #{ticket.name}, '%')
+    </if>
+  </sql>
+
+  <select id="listPagerCriteria" resultType="com.p2p.bean.Ticket">
+    <![CDATA[
+          select * from ticket t
+        ]]>
+    <include refid="pageCriteria_common"/>
+    order by tktime desc
+    limit #{pager.beginIndex}, #{pager.pageSize}
+  </select>
+
+  <select id="countCriteria" resultType="long" parameterType="com.p2p.bean.Ticket">
+    <![CDATA[
+          select count(t.kid) from ticket t
+        ]]>
+    <include refid="pageCriteria_common"/>
+  </select>
+
+  <update id="update" parameterType="com.p2p.bean.Ticket">
+    update ticket
+    <set>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        type = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="tkmoney != null">
+        tkmoney = #{tkmoney,jdbcType=INTEGER},
+      </if>
+      <if test="tktime != null">
+        tktime = #{tktime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where kid = #{kid,jdbcType=INTEGER}
+  </update>
+
+  <sql id="userTicket">
+    <if test="query != null and query.name != null and query.name != ''">
+      and t.name like concat('%', #{query.name}, '%')
+    </if>
+    <if test="query != null and query.type != null">
+      and t.type = #{query.type}
+    </if>
+  </sql>
+
+  <select id="listUserTicket" resultType="com.p2p.vo.UserTicketVO">
+    <![CDATA[
+          select ut.tktime as lqtime, t.* from user_ticket ut, ticket t where ut.kid = t.kid and ut.uid = #{query.uid}
+        ]]>
+    <include refid="userTicket"/>
+    order by tktime desc
+    limit #{pager.beginIndex}, #{pager.pageSize}
+  </select>
+
+  <select id="countUserTicket" resultType="long" parameterType="com.p2p.vo.UserTicketVO">
+    <![CDATA[
+          select count(ut.ukid) from user_ticket ut, ticket t where ut.kid = t.kid and ut.uid = #{query.uid}
+        ]]>
+    <include refid="userTicket"/>
+  </select>
+
+  <update id="updateStatus">
+    update ticket set status = 1 where kid in
+    <foreach collection="array" open="(" close=")" item="kid" separator=",">
+      #{kid}
+    </foreach>
+  </update>
+
+  <select id="getYesTicket" resultType="com.p2p.bean.Ticket">
+    <![CDATA[
+      select * from ticket where status = 0
+    ]]>
+  </select>
+
+</mapper>

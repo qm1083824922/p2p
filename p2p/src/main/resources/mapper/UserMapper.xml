@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.p2p.dao.UserMapper">
+    <insert id="save" parameterType="com.p2p.bean.User">
+        <selectKey keyColumn="uid" keyProperty="uid" resultType="integer" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+      <![CDATA[
+          insert into t_user(uname, phone, upwd, tzm, face) values(#{uname}, #{phone}, #{upwd}, #{tzm}, 'static/images/face.jpg')
+       ]]>
+    </insert>
+
+    <select id="getByPhonePwd" resultType="user">
+    <![CDATA[
+      select *  from t_user where phone = #{phone} and upwd = #{upwd}
+     ]]>
+    </select>
+
+    <select id="getByPhone" parameterType="string" resultType="int">
+        <![CDATA[
+          select * from t_user where phone = #{phone}
+        ]]>
+    </select>
+
+    <select id="getById" parameterType="integer" resultType="user">
+        <![CDATA[
+          select *  from t_user where uid = #{id}
+         ]]>
+    </select>
+
+    <update id="update" parameterType="com.p2p.bean.User">
+        <![CDATA[
+          update t_user
+        ]]>
+        <set>
+            <if test="upwd != null and upwd != ''">
+                upwd = #{upwd},
+            </if>
+            <if test="uname != null and uname != ''">
+                uname = #{uname},
+            </if>
+            <if test="zpwd != null and zpwd != ''">
+                zpwd = #{zpwd},
+            </if>
+            <if test="idtype != null and idtype != ''">
+                idtype = #{idtype},
+            </if>
+            <if test="idno != null and idno != ''">
+                idno = #{idno},
+            </if>
+            <if test="email != null and email != ''">
+                email = #{email},
+            </if>
+            <if test="rname != null and rname != ''">
+                rname = #{rname},
+            </if>
+            <if test="face != null and face != ''">
+                face = #{face},
+            </if>
+            <if test="sex != null">
+                sex = #{sex},
+            </if>
+            <if test="phone != null and phone != ''">
+                phone = #{phone},
+            </if>
+            <if test="isvip != null and isvip != ''">
+                isvip = #{isvip},
+            </if>
+        </set>
+        where uid = #{uid}
+    </update>
+    <select id="listPagerCriteria" resultType="user">
+        <![CDATA[
+            select * from t_user
+        ]]>
+        limit #{pager.beginIndex}, #{pager.pageSize}
+    </select>
+    <select id="countCriteria" resultType="long" parameterType="com.p2p.bean.Dynamic">
+        <![CDATA[
+          select count(uid) from t_user
+        ]]>
+    </select>
+
+    <update id="updateVip">
+            update t_user set isvip = 1 where uid in
+        <foreach collection="array" open="(" close=")" item="uid" separator=",">
+            #{uid}
+        </foreach>
+    </update>
+
+</mapper>
